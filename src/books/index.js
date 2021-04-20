@@ -74,8 +74,7 @@ router.post("/:asin/comments", async (req, res, next) => {
     const index = books.findIndex((book) => book.asin === req.params.asin);
     if (index !== -1) {
       const newComment = {
-        text: req.body.text,
-        username: req.body.username,
+        ...req.body,
         commentId: uniqid(),
         createdAt: new Date(),
       };
@@ -105,7 +104,6 @@ router.get("/:asin/comments", async (req, res, next) => {
     } else {
       res.send({ msg : "No comment available!"})
     }
-    console.log(bookComments)
   } catch (error) {
     next(error)
   }
