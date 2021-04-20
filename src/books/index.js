@@ -78,6 +78,7 @@ router.post("/:asin/comments", async (req, res, next) => {
         commentId: uniqid(),
         createdAt: new Date(),
       };
+      console.log(req.body)
       let book = books[index];
       book.comments = [...book.comments, newComment];
       books[index] = book;
