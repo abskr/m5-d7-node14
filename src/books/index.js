@@ -47,53 +47,53 @@ router.post("/", uploader.single("cover"), async (req, res, next) => {
 })
 
 //POST /books/:bookId/comments => adds a comment for book {bookId}
-// router.post("/:asin/comments", async (req, res, next) => {
-//   try {
-//     const books = await fs.readJSON(booksPath)
-//     const comments = await fs.readJSON(commentsPath)
-//     const selectedBook = books.filter(book => book.asin === req.params.asin)
-
-//     if (!selectedBook){
-//       const err = new Error ({ errMsg: "Book not found!"})
-//       err.httpStatusCode = 404
-//       next(err)
-//     }
-    
-//     const newComment = { ...req.body , _id: uniqid(), date: new Date()}
-//     comments.push(newComment)
-//     await fs.writeJSON(commentsPath, comments)
-//     res.status(200).send({ msg : "Comment successfully updated!", data: newComment})
-//   } catch (error) {
-//     next(error)
-//   }
-// })
-
 router.post("/:asin/comments", async (req, res, next) => {
   try {
-    const books = await fs.readJSON(booksPath);
-    const index = books.findIndex((book) => book.asin === req.params.asin);
-    if (index !== -1) {
-      const newComment = {
-        ...req.body,
-        commentId: uniqid(),
-        createdAt: new Date(),
-      };
-      console.log(req.body)
-      let book = books[index];
-      book.comments = [...book.comments, newComment];
-      books[index] = book;
-      res.status(201).send(book);
-    } else {
-      res.status(404).send({
-        message: `No book with this asin is found`
-      });
+    const books = await fs.readJSON(booksPath)
+    const comments = await fs.readJSON(commentsPath)
+    const selectedBook = books.filter(book => book.asin === req.params.asin)
+
+    if (!selectedBook){
+      const err = new Error ({ errMsg: "Book not found!"})
+      err.httpStatusCode = 404
+      next(err)
     }
-  } catch (err) {
-    const error = new Error(err.message);
-    error.httpStatusCode = 500;
-    next(error);
+    
+    const newComment = { ...req.body , _id: uniqid(), date: new Date()}
+    comments.push(newComment)
+    await fs.writeJSON(commentsPath, comments)
+    res.status(200).send({ msg : "Comment successfully updated!", data: newComment})
+  } catch (error) {
+    next(error)
   }
-});
+})
+
+// router.post("/:asin/comments", async (req, res, next) => {
+//   try {
+//     const books = await fs.readJSON(booksPath);
+//     const index = books.findIndex((book) => book.asin === req.params.asin);
+//     if (index !== -1) {
+//       const newComment = {
+//         ...req.body,
+//         commentId: uniqid(),
+//         createdAt: new Date(),
+//       };
+//       console.log(req.body)
+//       let book = books[index];
+//       book.comments = [...book.comments, newComment];
+//       books[index] = book;
+//       res.status(201).send(book);
+//     } else {
+//       res.status(404).send({
+//         message: `No book with this asin is found`
+//       });
+//     }
+//   } catch (err) {
+//     const error = new Error(err.message);
+//     error.httpStatusCode = 500;
+//     next(error);
+//   }
+// });
 
 router.get("/:asin/comments", async (req, res, next) => {
   try {
