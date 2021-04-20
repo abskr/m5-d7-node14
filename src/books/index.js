@@ -97,8 +97,15 @@ router.post("/:asin/comments", async (req, res, next) => {
 
 router.get("/:asin/comments", async (req, res, next) => {
   try {
-    const comments = await fs.readJSON(commentsPath)
-    const selectedComments = comments
+    const books = await fs.readJSON(booksPath)
+    const selectedBook = books.find(book => book.asin === req.params.asin)
+    if (selectedBook.hasOwnProperty("comments")) {
+      const bookComments = selectedBook.comments
+      res.status(200).send(bookComments)
+    } else {
+      res.send({ msg : "No comment available!"})
+    }
+    console.log(bookComments)
   } catch (error) {
     next(error)
   }
@@ -111,8 +118,24 @@ router.put("/:asin", async (req, res, next) => {
   }
 })
 
-router.delete("/:asin", async (req, res, next) => {
+router.delete("/:asin/comments/:commentId", async (req, res, next) => {
   try {
+    const books = await fs.readJSON(booksPath)
+    let selectedBook = books.find(book => book.asin === req.params.asin)
+    if (!selectedBook.hasOwnProperty("comments")) {
+      const err = new Error({ errMsg : "There's no comment to delete from this book!"})
+      err.httpStatusCode = 400
+      next(err)
+    }
+    
+    const bookComments = selectedBook.comments.filter(comm => comm._id !== req.params.commmentId)
+
+    let newBooksArray = books.filter(book => book.asin !== req.params.asin)
+    selectedBook.comments = [...bookComments]
+    newBooksArray.push(selectedBook)
+    // const removeComment = bookComments.filter(comment => comment._id !== req.params.commentId)
+    await fs.writeJSON(booksPath, newBooksArray)
+    res.send(selectedBook)
   } catch (error) {
     next(error)
   }
