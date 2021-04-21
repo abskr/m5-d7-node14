@@ -85,7 +85,11 @@ router.post("/:asin/comments", async (req, res, next) => {
       createdAt: new Date(),
     };
     console.log(req.body)
-    selectedBook.comments = [...selectedBook.comments, newComment]
+    if(!selectedBook.hasOwnProperty("comments")){
+      selectedBook.comments = [newComment]
+    } else {
+      selectedBook.comments= [...selectedBook.comments, newComment]
+    }
     console.log(selectedBook)
     let newBooksArray = books.filter(book => book.asin !== req.params.asin)
     newBooksArray.push(selectedBook)
