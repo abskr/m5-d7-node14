@@ -90,7 +90,7 @@ router.post("/:asin/comments", async (req, res, next) => {
     let newBooksArray = books.filter(book => book.asin !== req.params.asin)
     newBooksArray.push(selectedBook)
     await fs.writeJSON(booksPath, newBooksArray)
-    
+    res.send(newBooksArray)
   } catch (err) {
     const error = new Error(err.message);
     error.httpStatusCode = 500;
